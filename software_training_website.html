@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechMaster Academy - Software Engineering Training</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #b8b8b8;
+            margin-bottom: 2rem;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .course-card:hover::before {
+            opacity: 1;
+        }
+
+        .course-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .course-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            position: relative;
+        }
+
+        .course-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .course-desc {
+            color: #b8b8b8;
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .trainer-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .trainer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .trainer-name {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .course-detail {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .course-detail h1 {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .course-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .course-info {
+            color: #b8b8b8;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .course-info h3 {
+            color: #ffffff;
+            margin: 2rem 0 1rem 0;
+            font-size: 1.3rem;
+        }
+
+        .trainer-section {
+            text-align: center;
+        }
+
+        .trainer-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .trainer-details h3 {
+            color: #ffffff;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .trainer-details p {
+            color: #b8b8b8;
+            margin-bottom: 1rem;
+        }
+
+        .image-placeholder {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 1rem;
+            text-align: center;
+            color: #b8b8b8;
+            font-style: italic;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .course-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .course-detail {
+                padding: 2rem;
+            }
+            
+            .course-detail h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Course-specific gradients */
+        .ai-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .data-gradient { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .devops-gradient { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .cloud-gradient { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .testing-gradient { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Homepage -->
+        <div id="home" class="page active">
+            <header>
+                <h1 class="logo">TechMaster Academy</h1>
+                <p class="tagline">Master the Future of Software Engineering</p>
+            </header>
+
+            <div class="courses-grid">
+                <div class="course-card" onclick="showCourse('generative-ai')">
+                    <div class="course-icon ai-gradient">🤖</div>
+                    <h3 class="course-title">Generative AI</h3>
+                    <p class="course-desc">Master the art of creating intelligent systems that can generate content, code, and solutions autonomously.</p>
+                    <div class="trainer-preview">
+                        <div class="trainer-avatar">
+                            <img src="images/Rahul_CN.jpeg" alt="Dr. Rahul Nasalapure" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <span class="trainer-name">Dr. Rahul Nasalapure</span>
+                    </div>
+                </div>
+
+                <div class="course-card" onclick="showCourse('data-engineering')">
+                    <div class="course-icon data-gradient">📊</div>
+                    <h3 class="course-title">Data Engineering</h3>
+                    <p class="course-desc">Build robust data pipelines and architectures that power modern analytics and machine learning systems.</p>
+                    <div class="trainer-preview">
+                        <div class="trainer-avatar">
+                            <img src="images/Parimal.jpeg" alt="Dr. Parimal Gour" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <span class="trainer-name">Dr. Parimal Gour</span>
+                    </div>
+                </div>
+
+                <div class="course-card" onclick="showCourse('devops')">
+                    <div class="course-icon devops-gradient">⚙️</div>
+                    <h3 class="course-title">DevOps</h3>
+                    <p class="course-desc">Learn to bridge development and operations with automation, CI/CD, and cloud-native practices.</p>
+                    <div class="trainer-preview">
+                        <div class="trainer-avatar">
+                            <img src="images/Partikshit.jpeg" alt="Dr. Partikshit Guleria" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <span class="trainer-name">Dr. Partikshit Guleria</span>
+                    </div>
+                </div>
+
+                <div class="course-card" onclick="showCourse('cloud-architecture')">
+                    <div class="course-icon cloud-gradient">☁️</div>
+                    <h3 class="course-title">Cloud Architecture</h3>
+                    <p class="course-desc">Design scalable, secure, and efficient cloud solutions using AWS, Azure, and Google Cloud platforms.</p>
+                    <div class="trainer-preview">
+                        <div class="trainer-avatar">
+                            <img src="images/Arsalan.jpeg" alt="Dr. Arsalan Sheikh" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <span class="trainer-name">Dr. Arsalan Sheikh</span>
+                    </div>
+                </div>
+
+                <div class="course-card" onclick="showCourse('software-testing')">
+                    <div class="course-icon testing-gradient">🧪</div>
+                    <h3 class="course-title">Software Testing</h3>
+                    <p class="course-desc">Master comprehensive testing strategies including automation, performance, and security testing.</p>
+                    <div class="trainer-preview">
+                        <div class="trainer-avatar">
+                            <img src="images/Pavan.jpeg" alt="Dr. Pavan Kareti" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <span class="trainer-name">Dr. Pavan Kareti</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Detail Pages -->
+        <div id="generative-ai" class="page">
+            <button class="back-btn" onclick="showHome()">← Back to Courses</button>
+            <div class="course-detail">
+                <h1>Generative AI Mastery</h1>
+                <div class="course-content">
+                    <div class="course-info">
+                        <p>Dive deep into the revolutionary world of Generative Artificial Intelligence and learn to build systems that can create, innovate, and solve complex problems autonomously.</p>
+                        
+                        <h3>What You'll Learn:</h3>
+                        <p>• Large Language Models (LLMs) and their applications<br>
+                        • Prompt engineering and fine-tuning techniques<br>
+                        • Computer vision and image generation<br>
+                        • Building AI-powered applications<br>
+                        • Ethical AI development and deployment<br>
+                        • Integration with modern frameworks and APIs</p>
+                        
+                        <h3>Course Duration:</h3>
+                        <p>12 weeks intensive program with hands-on projects</p>
+                        
+                        <h3>Prerequisites:</h3>
+                        <p>Basic Python programming knowledge and familiarity with machine learning concepts</p>
+                    </div>
+                    <div class="trainer-section">
+                        <div class="trainer-image">
+                            <img src="images/Rahul_CN.jpeg" alt="Dr. Rahul Nasalapure" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <div class="trainer-details">
+                            <h3>Dr. Rahul Nasalapure</h3>
+                            <p>AI Research Scientist</p>
+                            <p>15+ years in ML/AI research with publications in top-tier conferences. Former lead scientist at major tech companies.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="data-engineering" class="page">
+            <button class="back-btn" onclick="showHome()">← Back to Courses</button>
+            <div class="course-detail">
+                <h1>Data Engineering Excellence</h1>
+                <div class="course-content">
+                    <div class="course-info">
+                        <p>Master the art of building robust, scalable data systems that power modern analytics and machine learning applications across enterprises.</p>
+                        
+                        <h3>What You'll Learn:</h3>
+                        <p>• Data pipeline design and implementation<br>
+                        • Big data technologies (Spark, Kafka, Hadoop)<br>
+                        • Cloud data platforms (AWS, GCP, Azure)<br>
+                        • Data warehousing and lake architectures<br>
+                        • ETL/ELT processes and optimization<br>
+                        • Data quality and governance frameworks</p>
+                        
+                        <h3>Course Duration:</h3>
+                        <p>16 weeks comprehensive program with real-world projects</p>
+                        
+                        <h3>Prerequisites:</h3>
+                        <p>SQL proficiency and basic programming experience (Python/Java)</p>
+                    </div>
+                    <div class="trainer-section">
+                        <div class="trainer-image">
+                            <img src="images/Parimal.jpeg" alt="Dr. Parimal Gour" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <div class="trainer-details">
+                            <h3>Dr. Parimal Gour</h3>
+                            <p>Senior Data Engineer</p>
+                            <p>12+ years building data infrastructure at scale. Expert in modern data stack and cloud architectures.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="devops" class="page">
+            <button class="back-btn" onclick="showHome()">← Back to Courses</button>
+            <div class="course-detail">
+                <h1>DevOps Transformation</h1>
+                <div class="course-content">
+                    <div class="course-info">
+                        <p>Learn to bridge the gap between development and operations with modern practices, tools, and methodologies that accelerate software delivery.</p>
+                        
+                        <h3>What You'll Learn:</h3>
+                        <p>• CI/CD pipeline design and implementation<br>
+                        • Infrastructure as Code (Terraform, Ansible)<br>
+                        • Container orchestration (Docker, Kubernetes)<br>
+                        • Monitoring and observability solutions<br>
+                        • Cloud automation and deployment strategies<br>
+                        • Security integration (DevSecOps)</p>
+                        
+                        <h3>Course Duration:</h3>
+                        <p>14 weeks hands-on program with industry projects</p>
+                        
+                        <h3>Prerequisites:</h3>
+                        <p>Basic Linux knowledge and software development experience</p>
+                    </div>
+                    <div class="trainer-section">
+                        <div class="trainer-image">
+                            <img src="images/Partikshit.jpeg" alt="Dr. Partikshit Guleria" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <div class="trainer-details">
+                            <h3>Dr. Partikshit Guleria</h3>
+                            <p>DevOps Architect</p>
+                            <p>10+ years in DevOps transformation. Certified in major cloud platforms and automation tools.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cloud-architecture" class="page">
+            <button class="back-btn" onclick="showHome()">← Back to Courses</button>
+            <div class="course-detail">
+                <h1>Cloud Architecture Mastery</h1>
+                <div class="course-content">
+                    <div class="course-info">
+                        <p>Design and implement scalable, secure, and cost-effective cloud solutions using leading platforms and architectural best practices.</p>
+                        
+                        <h3>What You'll Learn:</h3>
+                        <p>• Multi-cloud architecture design patterns<br>
+                        • AWS, Azure, and GCP core services<br>
+                        • Microservices and serverless architectures<br>
+                        • Cloud security and compliance<br>
+                        • Cost optimization strategies<br>
+                        • Disaster recovery and high availability</p>
+                        
+                        <h3>Course Duration:</h3>
+                        <p>18 weeks comprehensive program with certification prep</p>
+                        
+                        <h3>Prerequisites:</h3>
+                        <p>System administration experience and networking fundamentals</p>
+                    </div>
+                    <div class="trainer-section">
+                        <div class="trainer-image">
+                            <img src="images/Arsalan.jpeg" alt="Dr. Arsalan Sheikh" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <div class="trainer-details">
+                            <h3>Dr. Arsalan Sheikh</h3>
+                            <p>Cloud Solutions Architect</p>
+                            <p>8+ years designing enterprise cloud solutions. AWS, Azure, and GCP certified professional.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="software-testing" class="page">
+            <button class="back-btn" onclick="showHome()">← Back to Courses</button>
+            <div class="course-detail">
+                <h1>Software Testing Excellence</h1>
+                <div class="course-content">
+                    <div class="course-info">
+                        <p>Master comprehensive testing strategies and automation frameworks to ensure software quality and reliability in modern development cycles.</p>
+                        
+                        <h3>What You'll Learn:</h3>
+                        <p>• Test automation frameworks (Selenium, Cypress)<br>
+                        • API testing and performance testing<br>
+                        • Mobile and cross-platform testing<br>
+                        • Security testing methodologies<br>
+                        • Test-driven development (TDD)<br>
+                        • Quality assurance processes and metrics</p>
+                        
+                        <h3>Course Duration:</h3>
+                        <p>12 weeks intensive program with practical testing scenarios</p>
+                        
+                        <h3>Prerequisites:</h3>
+                        <p>Basic programming knowledge and understanding of software development lifecycle</p>
+                    </div>
+                    <div class="trainer-section">
+                        <div class="trainer-image">
+                            <img src="images/Pavan.jpeg" alt="Dr. Pavan Kareti" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <div class="trainer-details">
+                            <h3>Dr. Pavan Kareti</h3>
+                            <p>QA Engineering Manager</p>
+                            <p>14+ years in software testing and quality assurance. Expert in automation frameworks and testing strategies.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showCourse(courseId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected course page
+            document.getElementById(courseId).classList.add('active');
+            
+            // Smooth scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showHome() {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show home page
+            document.getElementById('home').classList.add('active');
+            
+            // Smooth scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Add smooth animations on load
+        window.addEventListener('load', function() {
+            const cards = document.querySelectorAll('.course-card');
+            cards.forEach((card, index) => {
+                card.style.animation = `fadeInUp 0.6s ease forwards ${index * 0.1}s`;
+            });
+        });
+
+        // Add CSS animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
